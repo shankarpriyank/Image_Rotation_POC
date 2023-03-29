@@ -54,4 +54,48 @@ class Rotation() {
             Log.d("Add", output.absolutePath)
         }
     }
+
+
+    fun cropImage(imageFile: File) {
+
+
+        Log.d("Trying to rotate image with LLJTran", "Starting")
+
+        val path = Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_DOWNLOADS
+        )
+
+        val tt = System.currentTimeMillis()
+        val file: File = File(path, "$tt.jpg")
+
+        val output = file
+
+        val rotated = try {
+            val lljTran = LLJTran(imageFile)
+            lljTran.read(
+                LLJTran.READ_ALL,
+                false
+            ) // This could throw an LLJTranException. I am not catching it for now... Let's see.
+            lljTran.transform(
+                LLJTran.CROP,LLJTran.OPT_DEFAULTS or LLJTran.OPT_XFORM_ORIENTATION, android.graphics.Rect(400,400,2000,1200)
+            )
+            BufferedOutputStream(FileOutputStream(output)).use { writer ->
+                lljTran.save(writer, LLJTran.OPT_WRITE_ALL)
+            }
+            lljTran.freeMemory()
+            true
+        } catch (e: LLJTranException) {
+            Log.e(
+                e.toString(),
+                "Error occurred while trying to rotate image with LLJTrans (AndroidMediaUtil)."
+            )
+            false
+        }
+
+        if (rotated) {
+            Log.d("Done rotating image", "rr")
+            Log.d("Add", output.absolutePath)
+        }
+    }
+
 }

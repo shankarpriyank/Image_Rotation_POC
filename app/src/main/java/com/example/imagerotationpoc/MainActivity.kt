@@ -66,12 +66,17 @@ class MainActivity : ComponentActivity() {
                             }
 
                         }
+                        Button(onClick = {ct(selectedImageUri!!) }) {
+                            Text(text = "Crop")
+
+                        }
+                        Button(onClick = {rt(selectedImageUri!!) }) {
+                            Text(text = "Rotate")
+
+                        }
 //
-//                        Button(onClick = {
-//                            (selectedImageUri!!)
-//                        }) {
-//                            Text(text = "Give permission")
-//                        }
+//
+
                     }
 
                     item {
@@ -114,5 +119,17 @@ class MainActivity : ComponentActivity() {
         val file: File = File(s)
 
         Rotation().rotateImage(file)
+    }
+    fun ct(f: Uri) {
+
+        val projection = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = contentResolver.query(f, projection, null, null, null)
+        val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        cursor.moveToFirst()
+        val s = cursor.getString(column_index)
+        cursor.close()
+        val file: File = File(s)
+
+        Rotation().cropImage(file)
     }
 }
